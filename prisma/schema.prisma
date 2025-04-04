@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model banners {
+  id            String      @id
+  title         String
+  url           String?
+  property_id   String?
+  desktop_image String
+  mobile_image  String?
+  video         String?
+  is_featured   Boolean?    @default(false)
+  metadata      Json?       @default("{}")
+  created_at    DateTime    @default(now())
+  updated_at    DateTime?
+  properties    properties? @relation(fields: [property_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "banners_property_id_properties_id_fk")
+}
+
+model properties {
+  id                String               @id
+  slug              String?              @unique(map: "properties_slug_unique")
+  project_status    project_status_enum? @default(launch)
+  status            status_enum?         @default(draft)
+  title             String
+  description       String?
+  address           Json?
+  mcmv              Boolean?             @default(true)
+  facilities        Json?
+  technical_sheet   Json?                @default("{}")
+  logo              String?
+  gallery           Json?
+  facade            String?
+  video_facade      String?
+  plans             Json?
+  materials         Json?
+  project_evolution Json?
+  panoramas         Json?
+  metadata          Json?                @default("{}")
+  uau_data          Json?                @default("{}")
+  created_at        DateTime             @default(now())
+  updated_at        DateTime?
+  banners           banners[]
+}
+
+model users {
+  id             String          @id
+  name           String
+  email          String          @unique(map: "users_email_unique")
+  email_verified Boolean
+  image          String?
+  cpf            String?
+  created_at     DateTime        @db.Timestamp(6)
+  updated_at     DateTime        @db.Timestamp(6)
+  role           user_role_enum? @default(customer)
+  banned         Boolean?
+  ban_reason     String?
+  ban_expires    DateTime?       @db.Timestamp(6)
+  metadata       Json?           @default("{}")
+}
+
+enum project_status_enum {
+  under_construction
+  launch
+  ready_to_move_in
+}
+
+enum status_enum {
+  published
+  draft
+}
+
+enum user_role_enum {
+  admin
+  marketing
+  customer
+  sales_secretary
+  broker
+  cac
+  sales
+  projects
+  financial
+  contability
+  engeneering
+}
+
+enum zone_enum {
+  north
+  south
+  east
+  west
+  center
+  southeast
+  northeast
+  northwest
+  southwest
+}
