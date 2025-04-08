@@ -2,13 +2,15 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Users, Settings, Menu } from "lucide-react"
+import { Users, Menu, UserRoundPlus } from "lucide-react"
 import { useState } from "react"
 import clsx from "clsx"
 
 const navItems = [
   { name: "Usuários", href: "/home", icon: Users },
-  { name: "Configurações", href: "/settings", icon: Settings },
+  { name: "Adicionar Usuários", href: "/usuarios/adicionar", icon: UserRoundPlus },
+
+  // { name: "Configurações", href: "/settings", icon: Settings },
 ]
 
 export default function Sidebar() {

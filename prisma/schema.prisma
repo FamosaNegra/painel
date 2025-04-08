@@ -49,13 +49,13 @@ model properties {
 }
 
 model users {
-  id             String          @id
+  id             String          @id @default(uuid())
   name           String
   email          String          @unique(map: "users_email_unique")
-  email_verified Boolean
+  email_verified Boolean         @default(false)
   image          String?
   cpf            String?
-  created_at     DateTime        @db.Timestamp(6)
+  created_at     DateTime        @default(now())
   updated_at     DateTime        @db.Timestamp(6)
   role           user_role_enum? @default(customer)
   banned         Boolean?
