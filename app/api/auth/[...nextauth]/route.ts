@@ -20,7 +20,18 @@ export const authOptions: AuthOptions = {
             cpf: credentials?.cpf,
           },
         })
-        if (user) return user
+
+        if (user && user.cpf && user.role) {
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            cpf: user.cpf,
+            role: user.role,
+            metadata: user.metadata || {}, // garante que metadata nunca será undefined
+          }
+        }
+
         return null
       },
     }),
@@ -29,14 +40,16 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role
-        token.id = user.id
+        token.cpf = user.cpf
+        token.metadata = user.metadata || {}
       }
       return token
     },
     async session({ session, token }) {
-      if (token) {
-        session.user.id = token.id as string
-        session.user.role = token.role
+      if (token && session.user) {
+        session.user.role = token.role as string
+        session.user.cpf = token.cpf as string
+        session.user.metadata = token.metadata || {}
       }
       return session
     },
