@@ -118,13 +118,12 @@ export default function AdicionarUsuarioPage() {
                 <SelectValue placeholder="Selecione uma função" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="cac">Customer Experience</SelectItem>
+                <SelectItem value="cac">CAC & R.I</SelectItem>
                 <SelectItem value="cac senior">
-                  Customer Experience Senior
+                  Coordenação CAC & R.I
                 </SelectItem>
                 <SelectItem value="marketing">Marketing</SelectItem>
-                <SelectItem value="cac analyst">CAC Analyst</SelectItem>
+                <SelectItem value="cac analyst">CAC (Obras)</SelectItem>
                 <SelectItem value="designer">Designer</SelectItem>
               </SelectContent>
             </Select>
