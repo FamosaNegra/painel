@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, FileText, Upload, Trash2, Save } from "lucide-react"
+import { Loader2, FileText, Upload, Trash2, Save, CheckCircle2 } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { toast } from "sonner"
 
 export default function EditarObraPage() {
@@ -19,6 +20,7 @@ export default function EditarObraPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [success, setSuccess] = useState(false)
   const [formData, setFormData] = useState<any>({})
 
   useEffect(() => {
@@ -37,6 +39,15 @@ export default function EditarObraPage() {
     if (id) fetchData()
   }, [id])
 
+  // Efeito para redirecionar após o sucesso
+  useEffect(() => {
+    let redirectTimer: NodeJS.Timeout
+
+    return () => {
+      if (redirectTimer) clearTimeout(redirectTimer)
+    }
+  }, [success, router])
+
   const handleChange = (field: string, value: string) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }))
   }
@@ -48,15 +59,38 @@ export default function EditarObraPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSaving(true)
+    setSuccess(false)
 
     try {
-      // Simulação de envio - substitua por sua API real
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      toast(
-        "Alterações salvas. As informações da obra foram atualizadas com sucesso.")
-      setSaving(false)
+      const res = await fetch(`/api/properties/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ project_evolution: formData }),
+      })
+
+      if (!res.ok) throw new Error("Erro ao salvar alterações")
+
+      // Mostrar toast e definir sucesso
+      toast.success("Alterações salvas com sucesso!", {
+        description: "Os dados da obra foram atualizados.",
+        duration: 5000, // Aumentar duração para garantir visibilidade
+      })
+
+      setTimeout(() => {
+        setSuccess(true)
+        setSaving(false)
+
+        router.push("/obras")
+
+      }, 3000)
     } catch (error) {
-      toast("Erro ao salvar. Ocorreu um erro ao salvar as alterações.")
+      console.error("Erro ao salvar alterações:", error)
+      toast.error("Erro ao salvar", {
+        description: "Ocorreu um problema ao salvar as alterações.",
+        duration: 3000,
+      })
       setSaving(false)
     }
   }
@@ -140,6 +174,14 @@ export default function EditarObraPage() {
               </CardContent>
             </Card>
           </div>
+
+          {success && (
+            <Alert className="mb-6 bg-green-50 text-green-700 border-green-200">
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertTitle>Sucesso!</AlertTitle>
+              <AlertDescription>Obras atualizadas. Você será redirecionado em instantes...</AlertDescription>
+            </Alert>
+          )}
 
           <Separator className="my-6" />
 
@@ -263,7 +305,7 @@ export default function EditarObraPage() {
             </div>
 
             <CardFooter className="px-0 pt-6">
-              <Button type="submit" className="w-full sm:w-auto flex items-center gap-2" disabled={saving}>
+              <Button type="submit" className="w-full sm:w-auto flex items-center gap-2" disabled={saving || success}>
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 {!saving && <Save className="h-4 w-4" />}
                 Salvar Alterações

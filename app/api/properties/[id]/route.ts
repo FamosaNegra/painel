@@ -29,3 +29,26 @@ export async function GET(request: Request, { params }: Params) {
     )
   }
 }
+
+export async function PUT(request: Request, { params }: Params) {
+  try {
+    const body = await request.json()
+    const { project_evolution } = body
+
+    const updated = await prisma.properties.update({
+      where: { id: params.id },
+      data: {
+        project_evolution,
+        updated_at: new Date(),
+      },
+    })
+
+    return NextResponse.json(updated)
+  } catch (error) {
+    console.error("Erro ao atualizar empreendimento:", error)
+    return NextResponse.json(
+      { error: "Erro ao atualizar empreendimento" },
+      { status: 500 }
+    )
+  }
+}

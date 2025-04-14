@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import AuthLayout from "@/components/AuthLayout"
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   title: "Painel Admin",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <AuthLayout>{children}</AuthLayout>
         </ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )
