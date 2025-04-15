@@ -42,6 +42,7 @@ export const authOptions: AuthOptions = {
         token.role = user.role
         token.cpf = user.cpf
         token.metadata = user.metadata || {}
+        token.loginTimestamp = Date.now() 
       }
       return token
     },
@@ -50,6 +51,7 @@ export const authOptions: AuthOptions = {
         session.user.role = token.role as string
         session.user.cpf = token.cpf as string
         session.user.metadata = token.metadata || {}
+        session.user.loginTimestamp = token.loginTimestamp
       }
       return session
     },

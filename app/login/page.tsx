@@ -9,25 +9,34 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, AlertCircle, Lock, Mail, User } from "lucide-react"
 
-// Esquema de validação com Zod
 const loginFormSchema = z.object({
   email: z.string().email({ message: "Digite um email válido" }),
   cpf: z
     .string()
     .min(11, { message: "CPF deve ter pelo menos 11 dígitos" })
-    .refine(
-      (cpf) => {
-        // Remove caracteres não numéricos para validação
-        const numbers = cpf.replace(/\D/g, "")
-        return numbers.length === 11
-      },
-      { message: "CPF inválido" },
-    ),
+    .refine((cpf) => {
+      const numbers = cpf.replace(/\D/g, "")
+      return numbers.length === 11
+    }, { message: "CPF inválido" })
 })
 
 type LoginFormValues = z.infer<typeof loginFormSchema>
@@ -39,7 +48,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [checkingSession, setCheckingSession] = useState(true)
 
-  // Inicializa o formulário com React Hook Form + Zod
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -48,20 +56,12 @@ export default function LoginPage() {
     },
   })
 
-  // Função para formatar o CPF enquanto o usuário digita
   const formatCPF = (value: string) => {
-    // Remove caracteres não numéricos
     const numbers = value.replace(/\D/g, "")
-
-    if (numbers.length <= 3) {
-      return numbers
-    } else if (numbers.length <= 6) {
-      return `${numbers.slice(0, 3)}.${numbers.slice(3)}`
-    } else if (numbers.length <= 9) {
-      return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`
-    } else {
-      return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`
-    }
+    if (numbers.length <= 3) return numbers
+    if (numbers.length <= 6) return `${numbers.slice(0, 3)}.${numbers.slice(3)}`
+    if (numbers.length <= 9) return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`
+    return `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`
   }
 
   useEffect(() => {
@@ -80,7 +80,6 @@ export default function LoginPage() {
         setCheckingSession(false)
       }
     }
-
     checkSession()
   }, [router, setUser])
 
@@ -89,7 +88,6 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      // Remover formatação do CPF antes de enviar
       const formattedData = {
         ...data,
         cpf: data.cpf.replace(/\D/g, ""),
@@ -105,6 +103,10 @@ export default function LoginPage() {
         const session = await getSession()
         if (session?.user) {
           const metadata = session.user.metadata || {}
+          const timestamp = session.user.loginTimestamp || Date.now()
+          const permission = metadata.permission || ""
+          const apiKey = process.env.NEXT_PUBLIC_API_KEY || ""
+          const tokenCustom = btoa(`${permission}.${timestamp}.${apiKey}`)
 
           const userData = {
             name: session.user.name || "",
@@ -112,7 +114,7 @@ export default function LoginPage() {
             cpf: session.user.cpf || "",
             role: session.user.role || "",
             metadata,
-            permission: metadata.permission,
+            tokenCustom,
           }
 
           setUser(userData)
@@ -148,7 +150,6 @@ export default function LoginPage() {
       <Card className="w-full max-w-md border-0 shadow-lg">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-6">
-            {/* Substitua pelo seu logo */}
             <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center">
               <User className="h-6 w-6 text-white" />
             </div>

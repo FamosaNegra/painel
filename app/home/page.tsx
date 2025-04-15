@@ -41,16 +41,22 @@ export default function UsersPage() {
     const fetchUsers = async () => {
       try {
         setLoading(true)
-        const res = await fetch("/api/users")
-
+        const token = localStorage.getItem("user-token")
+        if (!token) throw new Error("Token de autenticação ausente")
+        const res = await fetch("/api/users", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         if (!res.ok) {
           throw new Error("Falha ao carregar usuários")
         }
-
         const data = await res.json()
-
-        const extracted = Array.isArray(data) ? data : Array.isArray(data.users) ? data.users : []
-
+        const extracted = Array.isArray(data)
+          ? data
+          : Array.isArray(data.users)
+          ? data.users
+          : []
         setUsers(extracted)
         setError(null)
       } catch (error) {
@@ -63,6 +69,7 @@ export default function UsersPage() {
 
     fetchUsers()
   }, [])
+  
 
   const filtered = useMemo(() => {
     const term = search.toLowerCase()

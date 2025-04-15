@@ -12,12 +12,14 @@ interface UserState {
   cpf: string | null
   role: string | null
   metadata: Metadata | null
+  tokenCustom: string | null
   setUser: (data: {
     name: string
     email: string
     cpf: string
     role: string
     metadata: Metadata
+    tokenCustom: string
   }) => void
   clearUser: () => void
 }
@@ -30,10 +32,18 @@ export const useUserStore = create<UserState>()(
       cpf: null,
       role: null,
       metadata: null,
-      setUser: ({ name, email, cpf, role, metadata }) =>
-        set({ name, email, cpf, role, metadata }),
+      tokenCustom: null,
+      setUser: ({ name, email, cpf, role, metadata, tokenCustom }) =>
+        set({ name, email, cpf, role, metadata, tokenCustom }),
       clearUser: () =>
-        set({ name: null, email: null, cpf: null, role: null, metadata: null }),
+        set({
+          name: null,
+          email: null,
+          cpf: null,
+          role: null,
+          metadata: null,
+          tokenCustom: null,
+        }),
     }),
     {
       name: "user-store",
