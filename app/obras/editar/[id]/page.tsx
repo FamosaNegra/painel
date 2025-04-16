@@ -13,6 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Loader2, FileText, Upload, Trash2, Save, CheckCircle2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { toast } from "sonner"
+import { fetchWithAuth } from "@/lib/fetchWithAuth"
 
 export default function EditarObraPage() {
   const { id } = useParams()
@@ -26,7 +27,7 @@ export default function EditarObraPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await fetch(`/api/properties/${id}`)
+        const res = await fetchWithAuth(`/api/properties/${id}`)
         const result = await res.json()
         setData(result)
         setFormData(result.project_evolution || {})
@@ -62,7 +63,7 @@ export default function EditarObraPage() {
     setSuccess(false)
 
     try {
-      const res = await fetch(`/api/properties/${id}`, {
+      const res = await fetchWithAuth(`/api/properties/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

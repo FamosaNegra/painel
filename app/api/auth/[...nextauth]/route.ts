@@ -3,6 +3,36 @@ import CredentialsProvider from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "@/lib/prisma"
 
+interface ExtendedToken {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+  role: string
+  cpf: string
+  metadata: any
+  loginTimestamp?: number
+  tokenCustom?: string
+}
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      name?: string | null
+      email?: string | null
+      image?: string | null
+      role: string
+      cpf: string
+      metadata: any
+      loginTimestamp?: number
+      tokenCustom?: string
+    }
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT extends ExtendedToken {}
+}
+
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -28,7 +58,7 @@ export const authOptions: AuthOptions = {
             email: user.email,
             cpf: user.cpf,
             role: user.role,
-            metadata: user.metadata || {}, // garante que metadata nunca será undefined
+            metadata: user.metadata || {},
           }
         }
 
@@ -42,7 +72,14 @@ export const authOptions: AuthOptions = {
         token.role = user.role
         token.cpf = user.cpf
         token.metadata = user.metadata || {}
-        token.loginTimestamp = Date.now() 
+
+        const permission = user.metadata?.permission || ""
+        const timestamp = Date.now()
+        const apiKey = process.env.API_KEY || ""
+        const tokenCustom = Buffer.from(`${permission}.${timestamp}.${apiKey}`).toString("base64")
+
+        token.loginTimestamp = timestamp
+        token.tokenCustom = tokenCustom
       }
       return token
     },
@@ -52,6 +89,7 @@ export const authOptions: AuthOptions = {
         session.user.cpf = token.cpf as string
         session.user.metadata = token.metadata || {}
         session.user.loginTimestamp = token.loginTimestamp
+        session.user.tokenCustom = token.tokenCustom
       }
       return session
     },

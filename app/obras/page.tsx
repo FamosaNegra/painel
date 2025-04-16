@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Search, Building2, Loader2, PlusCircle, Edit, AlertCircle, Construction } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { fetchWithAuth } from "@/lib/fetchWithAuth"
 
 interface Property {
   id: string
@@ -42,7 +43,7 @@ export default function ObrasPage() {
     const fetchProperties = async () => {
       try {
         setLoading(true)
-        const res = await fetch("/api/properties/obras")
+        const res = await fetchWithAuth("/api/properties/obras")
 
         if (!res.ok) {
           throw new Error("Falha ao carregar as obras")

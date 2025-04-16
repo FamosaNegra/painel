@@ -11,8 +11,15 @@ const ALLOWED_PERMISSIONS = [
 ]
 
 export function middleware(request: NextRequest) {
-  // Roda somente para rotas que comecem com /api
-  if (!request.nextUrl.pathname.startsWith("/api")) {
+  const pathname = request.nextUrl.pathname
+
+  // ❌ Não aplicar middleware nas rotas de login/autenticação
+  if (pathname.startsWith("/api/auth")) {
+    return NextResponse.next()
+  }
+
+  // ✅ Aplicar somente em /api/*
+  if (!pathname.startsWith("/api")) {
     return NextResponse.next()
   }
 
@@ -24,7 +31,7 @@ export function middleware(request: NextRequest) {
 
   try {
     const token = authHeader.replace("Bearer ", "")
-    const decoded = atob(token) // formato esperado: permission.timestamp.apiKey
+    const decoded = atob(token) // formato: permission.timestamp.apiKey
     const [permission, timestamp, key] = decoded.split(".")
 
     if (
@@ -42,4 +49,8 @@ export function middleware(request: NextRequest) {
   } catch (err) {
     return NextResponse.json({ error: "Token malformado" }, { status: 401 })
   }
+}
+
+export const config = {
+  matcher: ["/api/:path*"], 
 }

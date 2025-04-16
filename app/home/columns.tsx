@@ -129,11 +129,11 @@ export const columns: ColumnDef<User>[] = [
                 <Edit className="h-4 w-4" />
                 Editar usuário
               </DropdownMenuItem>
-              <DropdownMenuSeparator />
+              {/* <DropdownMenuSeparator />
               <DropdownMenuItem className="cursor-pointer text-destructive flex items-center gap-2">
                 <Trash2 className="h-4 w-4" />
                 Excluir usuário
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

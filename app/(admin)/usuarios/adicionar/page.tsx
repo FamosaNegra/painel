@@ -32,6 +32,7 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import { fetchWithAuth } from "@/lib/fetchWithAuth"
 
 // Esquema de validação com Zod
 const userFormSchema = z.object({
@@ -111,7 +112,7 @@ export default function AdicionarUsuarioPage() {
         cpf: data.cpf.replace(/\D/g, ""),
       }
 
-      const res = await fetch("/api/users", {
+      const res = await fetchWithAuth("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
