@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id
   try {
     const property = await prisma.properties.findUnique({
-      where: { id: params.id },
+      where: { id },
     })
 
     if (!property) {
@@ -29,14 +30,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const id = (await params).id
   try {
     const body = await request.json()
     const { project_evolution } = body
 
     const updated = await prisma.properties.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         project_evolution,
         updated_at: new Date(),
