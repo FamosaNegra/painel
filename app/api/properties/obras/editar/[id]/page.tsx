@@ -1,16 +1,14 @@
 "use client"
 
-import { useRouter, useParams } from "next/navigation"
+import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
 export default function EditarObraPage() {
-  const router = useRouter()
   const { id } = useParams()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!id) return
-    // Aqui futuramente você pode buscar os dados do empreendimento com o ID
     setLoading(false)
   }, [id])
 

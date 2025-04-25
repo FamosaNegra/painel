@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Search, Building2, Loader2, PlusCircle, Edit, AlertCircle, Construction } from "lucide-react"
+import { Search, Building2, Loader2, Edit, AlertCircle, Construction } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { fetchWithAuth } from "@/lib/fetchWithAuth"
 

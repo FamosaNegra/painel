@@ -1,7 +1,7 @@
 "use client"
 
-import type { ColumnDef } from "@tanstack/react-table"
-import { ArrowDown, ArrowUp, MoreHorizontal, Edit, Eye, Trash2 } from "lucide-react"
+import type { ColumnDef, Column } from "@tanstack/react-table"
+import { ArrowDown, ArrowUp, MoreHorizontal, Edit, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -24,7 +24,7 @@ export type User = {
 }
 
 interface SortableHeaderProps {
-  column: any
+  column: Column<User, unknown>
   title: string
 }
 
@@ -121,7 +121,7 @@ export const columns: ColumnDef<User>[] = [
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer flex items-center gap-2">
+              <DropdownMenuItem className="cursor-pointer flex items-center gap-2" onClick={() => console.log(user)}>
                 <Eye className="h-4 w-4" />
                 Visualizar detalhes
               </DropdownMenuItem>

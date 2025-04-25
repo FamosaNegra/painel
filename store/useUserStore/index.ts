@@ -33,8 +33,10 @@ export const useUserStore = create<UserState>()(
       role: null,
       metadata: null,
       tokenCustom: null,
+
       setUser: ({ name, email, cpf, role, metadata, tokenCustom }) =>
         set({ name, email, cpf, role, metadata, tokenCustom }),
+
       clearUser: () =>
         set({
           name: null,
@@ -47,6 +49,15 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: "user-store",
+      // Garantia de que só dados serializáveis vão para o localStorage
+      partialize: (state) => ({
+        name: state.name,
+        email: state.email,
+        cpf: state.cpf,
+        role: state.role,
+        metadata: state.metadata,
+        tokenCustom: state.tokenCustom,
+      }),
     }
   )
 )

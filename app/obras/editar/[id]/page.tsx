@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
@@ -10,19 +9,44 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, FileText, Upload, Trash2, Save, CheckCircle2 } from "lucide-react"
+import { Loader2, FileText, Save, CheckCircle2 } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { toast } from "sonner"
 import { fetchWithAuth } from "@/lib/fetchWithAuth"
 
+interface ProjectEvolution {
+  project_percentage?: number
+  demolition?: number
+  earthworks?: number
+  shallow_foundation?: number
+  deep_foundation?: number
+  structure?: number
+  finishing?: number
+  enclosure?: number
+  project_pdf?: string
+}
+
+interface ObraData {
+  id: string
+  title: string
+  logo?: string
+  facade?: string
+  address?: {
+    street: string
+    number: string
+    neighborhood: string
+  }
+  project_evolution?: ProjectEvolution
+}
+
 export default function EditarObraPage() {
   const { id } = useParams()
   const router = useRouter()
-  const [data, setData] = useState<any>(null)
+  const [data, setData] = useState<ObraData | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState(false)
-  const [formData, setFormData] = useState<any>({})
+  const [formData, setFormData] = useState<ProjectEvolution>({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,22 +64,20 @@ export default function EditarObraPage() {
     if (id) fetchData()
   }, [id])
 
-  // Efeito para redirecionar após o sucesso
-  useEffect(() => {
-    let redirectTimer: NodeJS.Timeout
-
-    return () => {
-      if (redirectTimer) clearTimeout(redirectTimer)
-    }
-  }, [success, router])
-
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev: any) => ({ ...prev, [field]: value }))
+  const handleChange = (field: keyof ProjectEvolution, value: string) => {
+    const parsedValue = value === "" ? undefined : Number(value)
+    setFormData((prev) => ({
+      ...prev,
+      [field]: parsedValue,
+    }))
   }
 
-  const handleRemovePdf = () => {
-    setFormData((prev: any) => ({ ...prev, project_pdf: "" }))
-  }
+  // const handleRemovePdf = () => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     project_pdf: "",
+  //   }))
+  // }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -73,18 +95,15 @@ export default function EditarObraPage() {
 
       if (!res.ok) throw new Error("Erro ao salvar alterações")
 
-      // Mostrar toast e definir sucesso
       toast.success("Alterações salvas com sucesso!", {
         description: "Os dados da obra foram atualizados.",
-        duration: 5000, // Aumentar duração para garantir visibilidade
+        duration: 5000,
       })
 
       setTimeout(() => {
         setSuccess(true)
         setSaving(false)
-
         router.push("/obras")
-
       }, 3000)
     } catch (error) {
       console.error("Erro ao salvar alterações:", error)
@@ -134,13 +153,12 @@ export default function EditarObraPage() {
 
         <CardContent>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Informações da Obra */}
             <Card>
               <CardContent className="pt-6">
                 {data.logo && (
                   <div className="mb-4">
                     <Image
-                      src={data.logo || "/placeholder.svg"}
+                      src={data.logo}
                       alt="Logo"
                       width={300}
                       height={100}
@@ -156,12 +174,11 @@ export default function EditarObraPage() {
               </CardContent>
             </Card>
 
-            {/* Fachada */}
             <Card>
               <CardContent className="pt-6">
                 {data.facade ? (
                   <Image
-                    src={data.facade || "/placeholder.svg"}
+                    src={data.facade}
                     alt="Fachada"
                     width={400}
                     height={240}
@@ -186,94 +203,32 @@ export default function EditarObraPage() {
 
           <Separator className="my-6" />
 
-          {/* Formulário */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="project_percentage">Percentual da Obra</Label>
-                <Input
-                  id="project_percentage"
-                  type="number"
-                  value={formData.project_percentage || ""}
-                  onChange={(e) => handleChange("project_percentage", e.target.value)}
-                  className="focus:ring-primary"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="demolition">Demolição</Label>
-                <Input
-                  id="demolition"
-                  type="number"
-                  value={formData.demolition || ""}
-                  onChange={(e) => handleChange("demolition", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="earthworks">Terraplanagem</Label>
-                <Input
-                  id="earthworks"
-                  type="number"
-                  value={formData.earthworks || ""}
-                  onChange={(e) => handleChange("earthworks", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="shallow_foundation">Fundação Rasa</Label>
-                <Input
-                  id="shallow_foundation"
-                  type="number"
-                  value={formData.shallow_foundation || ""}
-                  onChange={(e) => handleChange("shallow_foundation", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="deep_foundation">Fundação Profunda</Label>
-                <Input
-                  id="deep_foundation"
-                  type="number"
-                  value={formData.deep_foundation || ""}
-                  onChange={(e) => handleChange("deep_foundation", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="structure">Estrutura</Label>
-                <Input
-                  id="structure"
-                  type="number"
-                  value={formData.structure || ""}
-                  onChange={(e) => handleChange("structure", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="finishing">Fechamento</Label>
-                <Input
-                  id="finishing"
-                  type="number"
-                  value={formData.finishing || ""}
-                  onChange={(e) => handleChange("finishing", e.target.value)}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="enclosure">Acabamento</Label>
-                <Input
-                  id="enclosure"
-                  type="number"
-                  value={formData.enclosure || ""}
-                  onChange={(e) => handleChange("enclosure", e.target.value)}
-                />
-              </div>
+              {[
+                "project_percentage",
+                "demolition",
+                "earthworks",
+                "shallow_foundation",
+                "deep_foundation",
+                "structure",
+                "finishing",
+                "enclosure",
+              ].map((field) => (
+                <div className="space-y-2" key={field}>
+                  <Label htmlFor={field}>{field.replace("_", " ")}</Label>
+                  <Input
+                    id={field}
+                    type="number"
+                    value={formData[field as keyof ProjectEvolution] ?? ""}
+                    onChange={(e) => handleChange(field as keyof ProjectEvolution, e.target.value)}
+                  />
+                </div>
+              ))}
             </div>
 
-            <Separator className="my-4" />
+            {/* <Separator className="my-4" />
 
-            {/* PDF */}
             <div className="space-y-2">
               <Label>Documento do Projeto</Label>
               <div className="flex flex-wrap items-center gap-4 mt-2">
@@ -303,12 +258,11 @@ export default function EditarObraPage() {
                   </Button>
                 )}
               </div>
-            </div>
+            </div> */}
 
-            <CardFooter className="px-0 pt-6">
+            <CardFooter className="px-0 pt-2">
               <Button type="submit" className="w-full sm:w-auto flex items-center gap-2" disabled={saving || success}>
-                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
-                {!saving && <Save className="h-4 w-4" />}
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Salvar Alterações
               </Button>
             </CardFooter>

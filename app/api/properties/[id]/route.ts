@@ -1,13 +1,10 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 
-interface Params {
-  params: {
-    id: string
-  }
-}
-
-export async function GET(request: Request, { params }: Params) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const property = await prisma.properties.findUnique({
       where: { id: params.id },
@@ -30,7 +27,10 @@ export async function GET(request: Request, { params }: Params) {
   }
 }
 
-export async function PUT(request: Request, { params }: Params) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const body = await request.json()
     const { project_evolution } = body

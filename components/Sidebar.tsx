@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Users, UserRoundPlus, LogOut, ChevronLeft, Hammer, LayoutDashboard, Settings, Menu } from "lucide-react"
+import { Users, UserRoundPlus, LogOut, ChevronLeft, Hammer, Menu } from "lucide-react"
 import { useUserStore } from "@/store/useUserStore"
 import { signOut } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -18,22 +18,19 @@ export default function Sidebar() {
   const pathname = usePathname()
   const router = useRouter()
   const [collapsed, setCollapsed] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
   const clearUser = useUserStore((state) => state.clearUser)
   const name = useUserStore((state) => state.name)
   const metadata = useUserStore((state) => state.metadata)
   const permission = metadata?.permission
-  const role = useUserStore((state) => state.role)
+  const initials = name ? `${name.split(" ")[0][0]}${name.split(" ").length > 1 ? name.split(" ")[1][0] : ""}` : "U"
 
-  // Detectar se é dispositivo móvel
+  // Detectar se é dispositivo móvel e colapsar automaticamente
   useEffect(() => {
     const checkIfMobile = () => {
-      setIsMobile(window.innerWidth < 768)
       if (window.innerWidth < 768) {
         setCollapsed(true)
       }
     }
-
     checkIfMobile()
     window.addEventListener("resize", checkIfMobile)
     return () => window.removeEventListener("resize", checkIfMobile)
@@ -46,18 +43,12 @@ export default function Sidebar() {
     router.push("/login")
   }
 
-  const firstName = name?.split(" ")[0] || "Usuário"
-  const lastName = name?.split(" ").slice(1).join(" ") || ""
-  const initials = name ? `${name.split(" ")[0][0]}${name.split(" ").length > 1 ? name.split(" ")[1][0] : ""}` : "U"
-
   const navItems = [
-    // { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Usuários", href: "/home", icon: Users },
     ...(permission === "admin" ? [{ name: "Adicionar Usuários", href: "/usuarios/adicionar", icon: UserRoundPlus }] : []),
     ...(permission === "admin" || permission === "cac analyst"
       ? [{ name: "Obras", href: "/obras", icon: Hammer }]
       : []),
-    // { name: "Configurações", href: "/configuracoes", icon: Settings },
   ]
 
   const getRoleBadge = () => {
@@ -83,8 +74,7 @@ export default function Sidebar() {
     }
   }
 
-  // Componente de navegação compartilhado entre desktop e mobile
-  const NavigationItems = ({ mobile = false }) => (
+  const NavigationItems = ({ mobile = false }: { mobile?: boolean }) => (
     <ul className={cn("space-y-1", mobile && "mt-4")}>
       {navItems.map((item) => {
         const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
@@ -130,7 +120,6 @@ export default function Sidebar() {
     </ul>
   )
 
-  // Versão mobile da sidebar (usando Sheet do shadcn)
   const MobileSidebar = () => (
     <Sheet>
       <SheetTrigger asChild>
@@ -174,11 +163,10 @@ export default function Sidebar() {
     </Sheet>
   )
 
-  // Versão desktop da sidebar
   const DesktopSidebar = () => (
     <aside
       className={cn(
-        "h-screen bg-background border-r shadow-sm fixed top-0 left-0  flex-col transition-all duration-300 z-10 hidden md:flex",
+        "h-screen bg-background border-r shadow-sm fixed top-0 left-0 flex-col transition-all duration-300 z-10 hidden md:flex",
         collapsed ? "w-[70px]" : "w-[240px]",
       )}
     >
@@ -259,7 +247,6 @@ export default function Sidebar() {
     <>
       <MobileSidebar />
       <DesktopSidebar />
-      {/* Espaçador para empurrar o conteúdo para a direita */}
       <div className={cn("hidden md:block transition-all duration-300", collapsed ? "ml-[70px]" : "ml-[240px]")} />
     </>
   )
