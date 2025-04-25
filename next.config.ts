@@ -5,8 +5,7 @@ const nextConfig = {
   },
   experimental: {
     allowedDevOrigins: ['http://192.168.1.39:3000'], // ajuste o IP conforme necessário
-  },
-  matcher: ["/api/:path*"],
+  }
 }
 
 module.exports = nextConfig
