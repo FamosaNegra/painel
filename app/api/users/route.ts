@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 export async function GET() {
   try {
     const users = await prisma.users.findMany({
-      where: { role: "customer" }, // ou remova esse filtro se quiser todos
+      where: { role: "customer" },
     });
 
     return NextResponse.json(users);
