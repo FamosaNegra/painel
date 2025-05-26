@@ -44,14 +44,22 @@ export default function Sidebar() {
   }
 
   const navItems = [
-    { name: "Usuários", href: "/home", icon: Users },
+    ...(permission === "admin" || permission === "cac analyst" || permission === "cac"
+      ? [
+          { name: "Usuários", href: "/home", icon: Users },
+        ]
+      : []),
     ...(permission === "admin" ? [{ name: "Adicionar Usuários", href: "/usuarios/adicionar", icon: UserRoundPlus }] : []),
     ...(permission === "admin" || permission === "cac analyst"
       ? [
           { name: "Obras", href: "/obras", icon: Hammer },
-          { name: "Tour", href: "/tour", icon: Video }, // ✅ NOVO ITEM ADICIONADO
         ]
       : []),
+      ...(permission === "admin" || permission === "video"
+        ? [
+            { name: "Tour", href: "/tour", icon: Video },
+          ]
+        : []),
   ]
   
 
