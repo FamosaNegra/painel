@@ -8,6 +8,7 @@ const ALLOWED_PERMISSIONS = [
   "cac analyst",
   "designer",
   "admin",
+  "video"
 ]
 
 export function middleware(request: NextRequest) {
