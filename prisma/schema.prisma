@@ -46,6 +46,7 @@ model properties {
   created_at        DateTime             @default(now())
   updated_at        DateTime?
   banners           banners[]
+  tour              String?
 }
 
 model users {

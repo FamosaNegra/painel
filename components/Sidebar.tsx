@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
-import { Users, UserRoundPlus, LogOut, ChevronLeft, Hammer, Menu } from "lucide-react"
+import { Users, UserRoundPlus, LogOut, ChevronLeft, Hammer, Menu, Video } from "lucide-react"
 import { useUserStore } from "@/store/useUserStore"
 import { signOut } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -47,9 +47,13 @@ export default function Sidebar() {
     { name: "Usuários", href: "/home", icon: Users },
     ...(permission === "admin" ? [{ name: "Adicionar Usuários", href: "/usuarios/adicionar", icon: UserRoundPlus }] : []),
     ...(permission === "admin" || permission === "cac analyst"
-      ? [{ name: "Obras", href: "/obras", icon: Hammer }]
+      ? [
+          { name: "Obras", href: "/obras", icon: Hammer },
+          { name: "Tour", href: "/tour", icon: Video }, // ✅ NOVO ITEM ADICIONADO
+        ]
       : []),
   ]
+  
 
   const getRoleBadge = () => {
     switch (permission?.toLowerCase()) {
