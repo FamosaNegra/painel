@@ -47,7 +47,7 @@ export default function TourPage() {
     const fetchProperties = async () => {
       try {
         setLoading(true);
-        const res = await fetchWithAuth("/api/properties/obras");
+        const res = await fetchWithAuth("/api/properties/tour");
 
         if (!res.ok) throw new Error("Falha ao carregar as propriedades");
 
