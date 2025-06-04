@@ -82,7 +82,7 @@ export default function Sidebar() {
     ...(permission === "admin" || permission === "video"
       ? [{ name: "Tour", href: "/tour", icon: Video }]
       : []),
-    ...(permission === "admin"
+    ...(permission === "externo"
       ? [{ name: "análise", href: "/analise", icon: ChartPie }]
       : []),
   ];
