@@ -19,6 +19,13 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
+  if (pathname === "/api/indication") {
+    return NextResponse.next();
+  }
+  
+  if (pathname.startsWith("/api/indicacao")) {
+    return NextResponse.next()
+  }
   // ✅ Aplicar somente em /api/*
   if (!pathname.startsWith("/api")) {
     return NextResponse.next()
