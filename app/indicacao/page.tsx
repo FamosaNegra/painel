@@ -69,7 +69,11 @@ interface Indication {
     number: string;
   };
   property?: {
-    [key: string]: any;
+    project: string;
+    block: string;
+    unit: string;
+    type?: string;
+  value?: number;
   } | null;
   bank: {
     bank: string;
@@ -166,25 +170,43 @@ export default function IndicationsPage() {
 
     // Sort data
     filtered.sort((a, b) => {
-      let aValue = a[sortField];
-      let bValue = b[sortField];
-
+      const rawA = a[sortField];
+      const rawB = b[sortField];
+    
+      // Tratar nulos/undefined
+      if (rawA == null && rawB == null) return 0;
+      if (rawA == null) return 1;
+      if (rawB == null) return -1;
+    
+      let aCompare: string | number = "";
+      let bCompare: string | number = "";
+    
+      // Datas
       if (sortField === "createdAt" || sortField === "birthDate") {
-        aValue = new Date(aValue as string).getTime();
-        bValue = new Date(bValue as string).getTime();
+        aCompare = new Date(rawA as string).getTime();
+        bCompare = new Date(rawB as string).getTime();
       }
-
-      if (typeof aValue === "string") {
-        aValue = aValue.toLowerCase();
-        bValue = (bValue as string).toLowerCase();
+      // Strings
+      else if (typeof rawA === "string" && typeof rawB === "string") {
+        aCompare = rawA.toLowerCase();
+        bCompare = rawB.toLowerCase();
       }
-
-      if (sortDirection === "asc") {
-        return aValue < bValue ? -1 : aValue > bValue ? 1 : 0;
-      } else {
-        return aValue > bValue ? -1 : aValue < bValue ? 1 : 0;
+      // Números
+      else if (typeof rawA === "number" && typeof rawB === "number") {
+        aCompare = rawA;
+        bCompare = rawB;
       }
+      // Fallback
+      else {
+        return 0;
+      }
+    
+      return sortDirection === "asc"
+        ? aCompare < bCompare ? -1 : aCompare > bCompare ? 1 : 0
+        : aCompare > bCompare ? -1 : aCompare < bCompare ? 1 : 0;
     });
+    
+    
 
     return filtered;
   }, [
