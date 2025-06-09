@@ -11,7 +11,7 @@ import {
   Hammer,
   Menu,
   Video,
-  ChartPie
+  ChartPie,
 } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { signOut } from "next-auth/react";
@@ -84,6 +84,9 @@ export default function Sidebar() {
       : []),
     ...(permission === "externo"
       ? [{ name: "análise", href: "/analise", icon: ChartPie }]
+      : []),
+    ...(permission === "admin"
+      ? [{ name: "Indicação", href: "/indicacao", icon: ChartPie }]
       : []),
   ];
 

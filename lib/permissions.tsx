@@ -3,7 +3,9 @@ export const permissions: Record<string, string[]> = {
   ADMIN: ["admin"],
   USERS: ["admin", "marketing", "cac", "cac analyst"],
   VIDEO: ["admin", "video"],
-  EXTERNO: ["admin", "externo"]
+  EXTERNO: ["admin", "externo"],
+  MARKETING: ["admin", "marketing"],
+
 
 };
 

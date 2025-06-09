@@ -83,3 +83,30 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+export async function GET() {
+  try {
+    const indications = await prisma.indication.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return NextResponse.json(indications, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": allowedOrigin,
+      },
+    });
+  } catch (error) {
+    console.error("Erro ao buscar indicações:", error);
+    return NextResponse.json(
+      { error: "Erro ao buscar indicações" },
+      {
+        status: 500,
+        headers: {
+          "Access-Control-Allow-Origin": allowedOrigin,
+        },
+      }
+    );
+  }
+}
